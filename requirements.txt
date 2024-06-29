@@ -1,0 +1,6 @@
+transformers==4.40.0
+tensorflow==2.13.0
+Flask==2.3.3
+Pillow==10.0.1
+python-dotenv==1.0.1
+sqlite3==3.37.2

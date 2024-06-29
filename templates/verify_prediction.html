@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1>Verify Prediction</h1>
+    <p class="lead">Predicted Class: {{ predicted_label }}</p>
+    <img src="data:image/jpeg;base64,{{ image_data }}" alt="Uploaded Image" class="image-container mb-3">
+    <form action="{{ url_for('result') }}" method="post" id="verification_form">
+        <p>Predicted "{{ predicted_label }}", is this correct?</p>
+        
+        <!-- Hidden inputs for form submission -->
+        <input type="hidden" name="predicted_label" value="{{ predicted_label }}">
+        <input type="hidden" name="image_data" value="{{ image_data }}">
+        <input type="hidden" name="is_correct" value="true">
+        
+        <!-- Actual label input -->
+        <input type="text" name="actual_label" id="actual_label" class="form-control mb-3" placeholder="Actual Label">
+        <button type="submit" class="btn btn-primary" onclick="setAction(true)">Yes</button>
+        <button type="button" class="btn btn-secondary" onClick="setAction(false)">No</button>
+        <p id="actualLabelRequired" style="display: none;" >Actual label required if no is clicked</p>
+    </form>
+    
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function setAction(isCorrect) {
+        const form = document.getElementById('verification_form');
+        const actualLabelInput = document.getElementById('actual_label');
+        const actualLabelRequired = document.getElementById('actualLabelRequired');
+        const correctPredictionInput = form.querySelector('input[name="is_correct"]');
+        // Set whether the prediction is correct or not
+        correctPredictionInput.value = isCorrect;
+
+        if (!isCorrect) {
+            actualLabelInput.required = true;
+
+            if (actualLabelInput.value === '') {
+                actualLabelRequired.style.display = 'block';
+                actualLabelInput.focus();
+                return false;
+            }
+        } else {
+            actualLabelInput.value = ''; // clear out value if the prediction was correct
+            actualLabelInput.required = false;
+        }
+
+        form.submit();
+    }
+    
+</script>
+{% endblock %}

@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1>Result</h1>
+    <p class="lead">Confirmed Prediction: {{ food_label }}</p>
+    <img src="data:image/jpeg;base64,{{ image_data }}" alt="Uploaded Image" class="image-container mb-3">
+
+    <!-- Serving Size Input -->
+    <div class="form-group">
+        <label for="servingSize">Serving Size</label>
+        <input type="number" id="servingSize" class="form-control" value="1" min="1" onchange="updateNutritionValues()">
+    </div>
+
+    <!-- Nutrition Information Display -->
+    <h3>Nutrition Information</h3>
+    <table id="nutritionTable" class="table">
+        <thead>
+            <tr>
+                <th>Nutrient</th>
+                <th>Amount</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Nutrition Information will be inserted here from script below -->
+        </tbody>
+    </table>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const nutritionData = {{ nutrition_info | tojson }};
+        const tableBodyRef = document.getElementById('nutritionTable').getElementsByTagName('tbody')[0];
+        window.baseValues = {};  // Initialize an object to store base values of nutrients
+
+        Object.keys(nutritionData).forEach(key => {
+            const newRow = tableBodyRef.insertRow(-1); // Insert a row at the end of the table
+            const cell1 = newRow.insertCell(0); // Insert the first cell
+            const cell2 = newRow.insertCell(1); // Insert the second cell
+
+            cell1.textContent = key; // Set the text content of the first cell to the nutrient name
+            cell2.textContent = nutritionData[key]; // Set the text content of the second cell to the nutrient amount
+            cell2.id = 'nutrient-' + key.replace(/\s+/g, '-'); // Set a unique ID for each cell containing nutrient amount
+
+            // Store the base nutrient value in the global baseValues object
+            window.baseValues[key] = parseFloat(nutritionData[key]);
+        });
+    });
+
+
+    function updateNutritionValues() {
+        let servingSize = parseFloat(document.getElementById('servingSize').value) || 1; // Ensure we have a numeric value, default to 1
+        
+        Object.keys(window.baseValues).forEach(function(nutrient) {
+            let baseValue = window.baseValues[nutrient];
+            let updatedValue = baseValue * servingSize;
+            document.getElementById('nutrient-' + nutrient.replace(/\s+/g, '-')).innerText = updatedValue.toFixed(2);
+        });
+    }
+</script>
+{% endblock %}

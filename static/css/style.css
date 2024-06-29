@@ -1,0 +1,24 @@
+body {
+    margin: 0;
+    padding: 0;
+}
+
+.navbar {
+    padding-left: 30px;
+}
+
+/* Style for the photo upload form and its child elements */
+#photo-prediction-upload {
+    display: inline-flex;
+}
+#photo-prediction-upload .form-group {
+    margin-bottom: 1rem; /* Space between form groups */
+}
+#photo-prediction-upload button {
+    margin-top: 1.5rem; /* Space above the button */
+}
+
+.image-container {
+    width: 300px;
+    height: auto;
+}
